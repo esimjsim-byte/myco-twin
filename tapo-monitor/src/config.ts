@@ -10,6 +10,7 @@ export interface Thresholds {
 export interface AppConfig {
   tapoEmail: string;
   tapoPassword: string;
+  hubIp: string; // H100 hub (온습도 센서 등 연결)
   plugIp1: string; // 환풍기 (fan)
   plugIp2: string; // 가습기 (humidifier)
   thresholds: Thresholds;
@@ -33,6 +34,7 @@ function num(name: string, fallback: number): number {
 export const config: AppConfig = {
   tapoEmail: required("TAPO_EMAIL"),
   tapoPassword: required("TAPO_PASSWORD"),
+  hubIp: required("HUB_IP"),
   plugIp1: required("PLUG_IP_1"),
   plugIp2: required("PLUG_IP_2"),
   thresholds: {
