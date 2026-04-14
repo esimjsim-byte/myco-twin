@@ -1,10 +1,10 @@
 import "dotenv/config";
 
 export interface Thresholds {
-  humidityLow: number;
-  humidityHigh: number;
-  co2High: number;
-  tempHigh: number;
+  tempMax: number;
+  tempMin: number;
+  humidMax: number;
+  humidMin: number;
 }
 
 export interface AppConfig {
@@ -38,10 +38,10 @@ export const config: AppConfig = {
   plugIp1: required("PLUG_IP_1"),
   plugIp2: required("PLUG_IP_2"),
   thresholds: {
-    humidityLow: num("HUMIDITY_LOW", 80),
-    humidityHigh: num("HUMIDITY_HIGH", 95),
-    co2High: num("CO2_HIGH", 1200),
-    tempHigh: num("TEMP_HIGH", 26),
+    tempMax: num("TEMP_MAX", 28),
+    tempMin: num("TEMP_MIN", 10),
+    humidMax: num("HUMID_MAX", 100),
+    humidMin: num("HUMID_MIN", 60),
   },
   minToggleIntervalMs: num("MIN_TOGGLE_INTERVAL_MS", 30_000),
 };

@@ -25,7 +25,6 @@ async function readSensor(): Promise<SensorReading> {
   return {
     humidity: Number(process.env.TEST_HUMIDITY ?? 90),
     temperatureC: Number(process.env.TEST_TEMP ?? 24),
-    co2Ppm: process.env.TEST_CO2 ? Number(process.env.TEST_CO2) : undefined,
     timestamp: Date.now(),
   };
 }

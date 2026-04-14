@@ -4,7 +4,6 @@ import type { TapoPlug } from "./tapoPlug";
 export interface SensorReading {
   humidity: number; // %RH
   temperatureC: number; // °C
-  co2Ppm?: number; // ppm (optional)
   timestamp: number;
 }
 
@@ -14,50 +13,45 @@ export interface Plugs {
 }
 
 /**
- * Threshold-driven control for the grow chamber.
+ * Threshold-driven control.
  *
- * Fan (환풍기):
- *   - ON  when CO2 exceeds co2High, or temperature exceeds tempHigh,
- *         or humidity exceeds humidityHigh.
- *   - OFF when all three are back within range.
+ * Each condition maps to exactly one plug action:
  *
- * Humidifier (가습기):
- *   - ON  when humidity drops below humidityLow.
- *   - OFF when humidity rises to or above humidityHigh.
- *   (Between low and high: keep current state to provide hysteresis.)
+ *   temperature > TEMP_MAX  -> fan ON        (환기로 온도 낮춤)
+ *   temperature < TEMP_MIN  -> fan OFF       (너무 추우면 환기 중단)
+ *   humidity    < HUMID_MIN -> humidifier ON (건조하면 가습 시작)
+ *   humidity    > HUMID_MAX -> humidifier OFF(너무 습하면 가습 중단)
+ *
+ * When a reading sits between its min/max, the corresponding plug's state
+ * is preserved — this is the hysteresis that prevents on/off flapping
+ * around a single setpoint.
  */
 export async function evaluateAndApply(
   reading: SensorReading,
   plugs: Plugs,
   t: Thresholds,
 ): Promise<void> {
-  const reasons: string[] = [];
-
-  const tempOver = reading.temperatureC > t.tempHigh;
-  const humOver = reading.humidity > t.humidityHigh;
-  const co2Over = reading.co2Ppm !== undefined && reading.co2Ppm > t.co2High;
-
-  if (tempOver) reasons.push(`temp ${reading.temperatureC}>${t.tempHigh}`);
-  if (humOver) reasons.push(`hum ${reading.humidity}>${t.humidityHigh}`);
-  if (co2Over) reasons.push(`co2 ${reading.co2Ppm}>${t.co2High}`);
-
-  const fanShouldBeOn = tempOver || humOver || co2Over;
-
   const tasks: Promise<void>[] = [];
 
-  if (fanShouldBeOn) {
-    tasks.push(plugs.fan.turnOn(`over: ${reasons.join(", ")}`));
-  } else {
-    tasks.push(plugs.fan.turnOff("within range"));
+  // Fan (환풍기) — driven by temperature.
+  if (reading.temperatureC > t.tempMax) {
+    tasks.push(
+      plugs.fan.turnOn(`temp ${reading.temperatureC}>${t.tempMax}`),
+    );
+  } else if (reading.temperatureC < t.tempMin) {
+    tasks.push(
+      plugs.fan.turnOff(`temp ${reading.temperatureC}<${t.tempMin}`),
+    );
   }
 
-  if (reading.humidity < t.humidityLow) {
+  // Humidifier (가습기) — driven by humidity.
+  if (reading.humidity < t.humidMin) {
     tasks.push(
-      plugs.humidifier.turnOn(`hum ${reading.humidity}<${t.humidityLow}`),
+      plugs.humidifier.turnOn(`hum ${reading.humidity}<${t.humidMin}`),
     );
-  } else if (reading.humidity >= t.humidityHigh) {
+  } else if (reading.humidity > t.humidMax) {
     tasks.push(
-      plugs.humidifier.turnOff(`hum ${reading.humidity}>=${t.humidityHigh}`),
+      plugs.humidifier.turnOff(`hum ${reading.humidity}>${t.humidMax}`),
     );
   }
 
