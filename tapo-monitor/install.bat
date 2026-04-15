@@ -117,6 +117,18 @@ if exist ".env" (
     >> ".env" echo HUMID_MAX=95
     >> ".env" echo HUMID_MIN=50
     >> ".env" echo POLL_INTERVAL_MS=60000
+    >> ".env" echo DASHBOARD_PORT=3000
+    >> ".env" echo.
+    >> ".env" echo ZONE_COUNT=9
+    >> ".env" echo SENSOR_1_NAME=1구역
+    >> ".env" echo SENSOR_2_NAME=2구역
+    >> ".env" echo SENSOR_3_NAME=3구역
+    >> ".env" echo SENSOR_4_NAME=4구역
+    >> ".env" echo SENSOR_5_NAME=5구역
+    >> ".env" echo SENSOR_6_NAME=6구역
+    >> ".env" echo SENSOR_7_NAME=7구역
+    >> ".env" echo SENSOR_8_NAME=8구역
+    >> ".env" echo SENSOR_9_NAME=9구역
     >> ".env" echo.
     >> ".env" echo PLC_IP=192.168.0.50
     >> ".env" echo PLC_PORT=502

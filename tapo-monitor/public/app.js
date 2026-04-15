@@ -3,13 +3,18 @@
 
 const state = {
   zones: [],
-  thresholds: null,
+  zoneById: new Map(), // zoneId -> Zone (with thresholds)
+  defaultThresholds: null,
   latest: new Map(), // zoneId -> { ts, temperature, humidity }
   selectedZone: 1,
   hours: 6,
   tempChart: null,
   humChart: null,
 };
+
+function thresholdsFor(zoneId) {
+  return state.zoneById.get(zoneId)?.thresholds ?? state.defaultThresholds;
+}
 
 function fmt(n, d = 1) {
   if (n == null || Number.isNaN(n)) return "—";
@@ -24,14 +29,14 @@ function timeAgo(tsMs) {
   return `${Math.floor(s / 3600)}시간 전`;
 }
 
-function classifyTemp(t) {
-  const { tempMax, tempMin } = state.thresholds;
+function classifyTemp(t, zoneId) {
+  const { tempMax, tempMin } = thresholdsFor(zoneId);
   if (t > tempMax) return "over";
   if (t < tempMin) return "under";
   return "ok";
 }
-function classifyHum(h) {
-  const { humidMax, humidMin } = state.thresholds;
+function classifyHum(h, zoneId) {
+  const { humidMax, humidMin } = thresholdsFor(zoneId);
   if (h > humidMax) return "over";
   if (h < humidMin) return "under";
   return "ok";
@@ -44,9 +49,10 @@ function renderGrid() {
     const r = state.latest.get(z.id);
     const t = r?.temperature;
     const h = r?.humidity;
-    const tClass = t != null ? classifyTemp(t) : "ok";
-    const hClass = h != null ? classifyHum(h) : "ok";
+    const tClass = t != null ? classifyTemp(t, z.id) : "ok";
+    const hClass = h != null ? classifyHum(h, z.id) : "ok";
     const alertLevel = tClass !== "ok" || hClass !== "ok" ? "alert" : "";
+    const th = thresholdsFor(z.id);
 
     const card = document.createElement("div");
     card.className = `card ${alertLevel}`;
@@ -66,7 +72,7 @@ function renderGrid() {
         </div>
       </div>
       <div class="card-foot">
-        <span>ID ${z.id}</span>
+        <span>임계값 ${th.tempMin}~${th.tempMax}°C / ${th.humidMin}~${th.humidMax}%</span>
         <span>${timeAgo(r?.ts)}</span>
       </div>`;
     grid.appendChild(card);
@@ -80,7 +86,11 @@ function renderAlertSummary() {
   for (const z of state.zones) {
     const r = state.latest.get(z.id);
     if (!r) continue;
-    if (classifyTemp(r.temperature) !== "ok" || classifyHum(r.humidity) !== "ok") count++;
+    if (
+      classifyTemp(r.temperature, z.id) !== "ok" ||
+      classifyHum(r.humidity, z.id) !== "ok"
+    )
+      count++;
   }
   if (count === 0) {
     pill.textContent = `정상 (${state.zones.length}/${state.zones.length})`;
@@ -96,7 +106,8 @@ async function loadMeta() {
   const res = await fetch("/api/zones");
   const data = await res.json();
   state.zones = data.zones;
-  state.thresholds = data.thresholds;
+  state.zoneById = new Map(data.zones.map((z) => [z.id, z]));
+  state.defaultThresholds = data.defaultThresholds;
 
   const zoneSelect = document.getElementById("zone-select");
   zoneSelect.innerHTML = "";
@@ -144,30 +155,24 @@ function handleLiveReadings(readings) {
   // 선택된 구역의 차트에 실시간 포인트 추가
   const live = readings.find((r) => r.zoneId === state.selectedZone);
   if (live && state.tempChart) {
-    appendPoint(state.tempChart, live.timestamp, live.temperatureC);
-    appendPoint(state.humChart, live.timestamp, live.humidity);
+    const th = thresholdsFor(state.selectedZone);
+    appendPoint(state.tempChart, live.timestamp, live.temperatureC, th.tempMax, th.tempMin);
+    appendPoint(state.humChart, live.timestamp, live.humidity, th.humidMax, th.humidMin);
   }
 }
 
-function appendPoint(chart, ts, value) {
+function appendPoint(chart, ts, value, max, min) {
   const ds = chart.data.datasets[0];
   ds.data.push({ x: ts, y: value });
   const cutoff = Date.now() - state.hours * 3600_000;
   while (ds.data.length && ds.data[0].x < cutoff) ds.data.shift();
+  const xFrom = ds.data.length ? ds.data[0].x : cutoff;
+  setThresholdLines(chart, max, min, xFrom, ts);
   chart.update("none");
 }
 
-function buildChart(canvasId, label, color, thresholdLines) {
+function buildChart(canvasId, label, color) {
   const ctx = document.getElementById(canvasId).getContext("2d");
-  const annotations = thresholdLines.map((v, i) => ({
-    type: "line",
-    yMin: v.value,
-    yMax: v.value,
-    borderColor: v.color,
-    borderDash: [5, 5],
-    borderWidth: 1,
-    label: { display: false },
-  }));
   return new Chart(ctx, {
     type: "line",
     data: {
@@ -181,6 +186,24 @@ function buildChart(canvasId, label, color, thresholdLines) {
           pointRadius: 0,
           tension: 0.25,
           fill: true,
+        },
+        {
+          label: "상한",
+          data: [],
+          borderColor: "#f85149",
+          borderDash: [5, 5],
+          borderWidth: 1,
+          pointRadius: 0,
+          fill: false,
+        },
+        {
+          label: "하한",
+          data: [],
+          borderColor: "#58a6ff",
+          borderDash: [5, 5],
+          borderWidth: 1,
+          pointRadius: 0,
+          fill: false,
         },
       ],
     },
@@ -208,6 +231,17 @@ function buildChart(canvasId, label, color, thresholdLines) {
   });
 }
 
+function setThresholdLines(chart, max, min, xFrom, xTo) {
+  chart.data.datasets[1].data = [
+    { x: xFrom, y: max },
+    { x: xTo, y: max },
+  ];
+  chart.data.datasets[2].data = [
+    { x: xFrom, y: min },
+    { x: xTo, y: min },
+  ];
+}
+
 async function refreshCharts() {
   const res = await fetch(`/api/history?zone=${state.selectedZone}&hours=${state.hours}`);
   const data = await res.json();
@@ -218,18 +252,19 @@ async function refreshCharts() {
   }));
 
   if (!state.tempChart) {
-    state.tempChart = buildChart("temp-chart", "온도 (°C)", "#f85149", [
-      { value: state.thresholds.tempMax, color: "#f85149" },
-      { value: state.thresholds.tempMin, color: "#58a6ff" },
-    ]);
-    state.humChart = buildChart("hum-chart", "습도 (%)", "#58a6ff", [
-      { value: state.thresholds.humidMax, color: "#f85149" },
-      { value: state.thresholds.humidMin, color: "#58a6ff" },
-    ]);
+    state.tempChart = buildChart("temp-chart", "온도 (°C)", "#f85149");
+    state.humChart = buildChart("hum-chart", "습도 (%)", "#58a6ff");
   }
 
   state.tempChart.data.datasets[0].data = points.map((p) => ({ x: p.ts, y: p.t }));
   state.humChart.data.datasets[0].data = points.map((p) => ({ x: p.ts, y: p.h }));
+
+  const th = thresholdsFor(state.selectedZone);
+  const xFrom = points.length ? points[0].ts : Date.now() - state.hours * 3600_000;
+  const xTo = points.length ? points[points.length - 1].ts : Date.now();
+  setThresholdLines(state.tempChart, th.tempMax, th.tempMin, xFrom, xTo);
+  setThresholdLines(state.humChart, th.humidMax, th.humidMin, xFrom, xTo);
+
   state.tempChart.update("none");
   state.humChart.update("none");
 }

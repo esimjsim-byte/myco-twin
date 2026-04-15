@@ -39,6 +39,9 @@ function pickControlReading(
   };
 }
 
+/** Tapo/PLC 제어 판단에 쓸 구역. 기본은 구역 1. */
+const controlZone = config.zones.find((z) => z.id === 1) ?? config.zones[0]!;
+
 async function tick(): Promise<void> {
   try {
     const readings = await readAllZones();
@@ -50,8 +53,8 @@ async function tick(): Promise<void> {
 
     const control = pickControlReading(readings);
     await Promise.allSettled([
-      evaluateAndApply(control, plugs, config.thresholds),
-      plc.applyThresholds(control, config.thresholds),
+      evaluateAndApply(control, plugs, controlZone.thresholds),
+      plc.applyThresholds(control, controlZone.thresholds),
     ]);
   } catch (err) {
     console.error("tick failed:", err);

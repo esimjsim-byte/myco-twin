@@ -57,7 +57,10 @@ export function startServer(port: number): http.Server {
     const url = new URL(req.url ?? "/", `http://${req.headers.host ?? "localhost"}`);
 
     if (url.pathname === "/api/zones") {
-      sendJson(res, { zones: ZONES, thresholds: config.thresholds });
+      sendJson(res, {
+        zones: ZONES,
+        defaultThresholds: config.thresholds,
+      });
       return;
     }
 
