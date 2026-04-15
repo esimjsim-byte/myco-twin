@@ -35,18 +35,50 @@ REM ---------- 설정 ----------
 set "REPO_URL=https://github.com/esimjsim-byte/myco-twin.git"
 set "BRANCH=claude/setup-tapo-monitor-project-skv4V"
 set "CLONE_DIR=myco-twin"
-set "PROJECT_DIR=%CLONE_DIR%\tapo-monitor"
+set "PROJECT_DIR=%CD%\%CLONE_DIR%\tapo-monitor"
 
-REM ---------- 1) git clone ----------
-echo [1/3] GitHub 저장소를 가져옵니다...
-if exist "%CLONE_DIR%\.git" (
-    echo       기존 저장소가 발견되어 git pull 로 업데이트합니다.
+REM ---------- 현재 위치 감지 ----------
+REM install.bat 이 이미 tapo-monitor 프로젝트 폴더 안에서 실행된 경우
+REM (= package.json 에 "tapo-monitor" 가 있고 src\index.ts 가 존재) 추가 clone 하지 않는다.
+set "IS_IN_PROJECT=0"
+if exist "package.json" if exist "src\index.ts" (
+    findstr /c:"\"name\": \"tapo-monitor\"" package.json >nul 2>nul
+    if not errorlevel 1 set "IS_IN_PROJECT=1"
+)
+
+REM 부모 기준: install.bat 이 myco-twin\ 안(= tapo-monitor 상위) 에서 실행된 경우
+set "IS_IN_REPO_ROOT=0"
+if "%IS_IN_PROJECT%"=="0" if exist "tapo-monitor\package.json" if exist "tapo-monitor\src\index.ts" (
+    set "IS_IN_REPO_ROOT=1"
+)
+
+REM ---------- 1) 저장소 준비 ----------
+if "%IS_IN_PROJECT%"=="1" (
+    echo [1/3] 현재 폴더가 tapo-monitor 프로젝트입니다. clone 을 건너뜁니다.
+    set "PROJECT_DIR=%CD%"
+    REM 이미 git 관리 중이면 최신 브랜치로 갱신 시도
+    if exist "..\.git" (
+        pushd ..
+        git fetch origin %BRANCH% >nul 2>nul
+        git checkout %BRANCH% >nul 2>nul
+        git pull origin %BRANCH%
+        popd
+    )
+) else if "%IS_IN_REPO_ROOT%"=="1" (
+    echo [1/3] 이미 clone 된 myco-twin 폴더 안입니다. git pull 로 갱신합니다.
+    git fetch origin %BRANCH%
+    git checkout %BRANCH%
+    git pull origin %BRANCH%
+    set "PROJECT_DIR=%CD%\tapo-monitor"
+) else if exist "%CLONE_DIR%\.git" (
+    echo [1/3] 기존 저장소가 발견되어 git pull 로 갱신합니다.
     pushd "%CLONE_DIR%"
     git fetch origin %BRANCH%
     git checkout %BRANCH%
     git pull origin %BRANCH%
     popd
 ) else (
+    echo [1/3] GitHub 저장소를 clone 합니다...
     git clone -b %BRANCH% %REPO_URL% %CLONE_DIR%
 )
 if errorlevel 1 (
@@ -108,12 +140,12 @@ echo ==========================================================
 echo   설치가 완료되었습니다!
 echo ==========================================================
 echo.
-echo   프로젝트 위치 : %CD%\%PROJECT_DIR%
+echo   프로젝트 위치 : %PROJECT_DIR%
 echo.
 echo   다음 단계:
-echo     1) %PROJECT_DIR%\.env 를 열어 실제 비밀번호와 IP 를 입력하세요.
+echo     1) 위 폴더의 .env 를 열어 실제 비밀번호와 IP 를 입력하세요.
 echo     2) 명령 프롬프트에서:
-echo          cd %PROJECT_DIR%
+echo          cd /d "%PROJECT_DIR%"
 echo          npm start
 echo.
 pause
