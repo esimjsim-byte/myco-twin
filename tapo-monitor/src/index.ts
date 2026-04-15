@@ -1,6 +1,7 @@
 import { config } from "./config";
 import { TapoPlug } from "./tapoPlug";
 import { evaluateAndApply, type Plugs, type SensorReading } from "./automation";
+import { PlcController } from "./plcControl";
 
 const fan = new TapoPlug(
   "fan",
@@ -18,6 +19,8 @@ const humidifier = new TapoPlug(
 );
 const plugs: Plugs = { fan, humidifier };
 
+const plc = new PlcController(config.plc);
+
 /**
  * Replace this stub with a real sensor read (e.g. SCD41, SHT31, etc.).
  */
@@ -32,7 +35,10 @@ async function readSensor(): Promise<SensorReading> {
 async function tick(): Promise<void> {
   try {
     const reading = await readSensor();
-    await evaluateAndApply(reading, plugs, config.thresholds);
+    await Promise.allSettled([
+      evaluateAndApply(reading, plugs, config.thresholds),
+      plc.applyThresholds(reading, config.thresholds),
+    ]);
   } catch (err) {
     console.error("tick failed:", err);
   }

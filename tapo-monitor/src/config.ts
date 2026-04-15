@@ -7,6 +7,15 @@ export interface Thresholds {
   humidMin: number;
 }
 
+export interface PlcSettings {
+  ip: string;
+  port: number;
+  unitId: number;
+  coilFcu: number;
+  coilHumidifier: number;
+  coilVentilation: number;
+}
+
 export interface AppConfig {
   tapoEmail: string;
   tapoPassword: string;
@@ -15,6 +24,7 @@ export interface AppConfig {
   plugIp2: string; // 가습기 (humidifier)
   thresholds: Thresholds;
   minToggleIntervalMs: number;
+  plc: PlcSettings;
 }
 
 function required(name: string): string {
@@ -44,4 +54,12 @@ export const config: AppConfig = {
     humidMin: num("HUMID_MIN", 60),
   },
   minToggleIntervalMs: num("MIN_TOGGLE_INTERVAL_MS", 30_000),
+  plc: {
+    ip: required("PLC_IP"),
+    port: num("PLC_PORT", 502),
+    unitId: num("PLC_UNIT_ID", 1),
+    coilFcu: num("PLC_COIL_FCU", 1),
+    coilHumidifier: num("PLC_COIL_HUMIDIFIER", 2),
+    coilVentilation: num("PLC_COIL_VENTILATION", 3),
+  },
 };
