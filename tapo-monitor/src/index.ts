@@ -2,6 +2,9 @@ import { config } from "./config";
 import { TapoPlug } from "./tapoPlug";
 import { evaluateAndApply, type Plugs, type SensorReading } from "./automation";
 import { PlcController } from "./plcControl";
+import { readAllZones } from "./sensors";
+import { insertReading, pruneOld } from "./db";
+import { startServer, broadcastReadings } from "./server";
 
 const fan = new TapoPlug(
   "fan",
@@ -21,23 +24,34 @@ const plugs: Plugs = { fan, humidifier };
 
 const plc = new PlcController(config.plc);
 
-/**
- * Replace this stub with a real sensor read (e.g. SCD41, SHT31, etc.).
- */
-async function readSensor(): Promise<SensorReading> {
+/** 제어 판단 기준용 대표 reading. 현재는 구역 1의 값을 사용한다. */
+function pickControlReading(
+  readings: Awaited<ReturnType<typeof readAllZones>>,
+): SensorReading {
+  const primary = readings.find((r) => r.zoneId === 1) ?? readings[0];
+  if (!primary) {
+    return { humidity: 70, temperatureC: 22, timestamp: Date.now() };
+  }
   return {
-    humidity: Number(process.env.TEST_HUMIDITY ?? 90),
-    temperatureC: Number(process.env.TEST_TEMP ?? 24),
-    timestamp: Date.now(),
+    humidity: primary.humidity,
+    temperatureC: primary.temperatureC,
+    timestamp: primary.timestamp,
   };
 }
 
 async function tick(): Promise<void> {
   try {
-    const reading = await readSensor();
+    const readings = await readAllZones();
+
+    for (const r of readings) {
+      insertReading(r.zoneId, r.timestamp, r.temperatureC, r.humidity);
+    }
+    broadcastReadings(readings);
+
+    const control = pickControlReading(readings);
     await Promise.allSettled([
-      evaluateAndApply(reading, plugs, config.thresholds),
-      plc.applyThresholds(reading, config.thresholds),
+      evaluateAndApply(control, plugs, config.thresholds),
+      plc.applyThresholds(control, config.thresholds),
     ]);
   } catch (err) {
     console.error("tick failed:", err);
@@ -48,10 +62,16 @@ async function main(): Promise<void> {
   // Prime plug state so the first decision has an accurate cache.
   await Promise.allSettled([fan.refreshState(), humidifier.refreshState()]);
 
+  const port = Number(process.env.DASHBOARD_PORT ?? 3000);
+  startServer(port);
+
   const intervalMs = Number(process.env.POLL_INTERVAL_MS ?? 10_000);
   console.log(`tapo-monitor started (poll=${intervalMs}ms)`);
   await tick();
   setInterval(tick, intervalMs);
+
+  // 매 시각 오래된 데이터 정리
+  setInterval(() => pruneOld(), 3600_000);
 }
 
 main().catch((err) => {
