@@ -1,0 +1,29 @@
+# Secrets
+.env
+
+# Local databases & cached fetches
+data/*.db
+data/*.sqlite
+data/*.sqlite3
+data/cache/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# Virtual environments
+.venv/
+venv/
+
+# uv
+uv.lock
+
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store
