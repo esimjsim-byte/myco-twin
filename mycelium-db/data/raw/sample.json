@@ -1,0 +1,271 @@
+{
+  "query": "Lentinula edodes submerged culture beta-glucan carbon source nitrogen source",
+  "query_date": "2026-04-17",
+  "total_found": 10,
+  "note": "Sample dataset for extractor development. Derived from real PubMed/PMC records with key numeric data preserved. Four papers include PMC full-text (sections + tables); six are abstract-only. This mirrors the realistic ~40% PMC OA coverage for this topic.",
+  "papers": [
+    {
+      "pmid": "40067479",
+      "pmcid": "PMC11897120",
+      "doi": "10.1007/s00253-024-13387-w",
+      "title": "Cultivation methods and biology of Lentinula edodes",
+      "authors": ["Wang Q", "Sakamoto K"],
+      "journal": "Applied Microbiology and Biotechnology",
+      "year": 2025,
+      "publication_types": ["Journal Article", "Review"],
+      "mesh_terms": ["Lentinula", "Fungal Proteins", "Polysaccharides", "Fermentation", "Culture Media"],
+      "abstract": "In this study, the biological applications of cultivation methods related to cultivar selection, vegetative growth, and reproductive development in Lentinula edodes cultivation are briefly reviewed to clarify the current situation and inform future developments. The current cultivars widely used in the main production areas are derived from wild strains distributed in northern Asia. L. edodes is mostly produced on synthetic logs filled with sawdust substrates. With the continuous increase of mycelial biomass, the content of L. edodes polysaccharide including beta-glucans also increases, while the contents of cellulose, hemicellulose, and lignin continuously decrease. The main components of L. edodes cell wall are polysaccharides such as beta-glucan and chitin, whose substrates are nucleotide diphosphate (UDP)-glucose and UDP-N-acetylglucosamine (UDP-N-GlcNAc), respectively. Proteins from wheat bran added to sawdust substrates can be degraded into amino acids to replenish the carbon skeleton of the TCA cycle and provide the preferred nitrogen sources (i.e., NH4+, glutamine, and glutamate).",
+      "fulltext": {
+        "pmcid": "PMC11897120",
+        "sections": {
+          "introduction": "Lentinula edodes (Berk.) Pegler, commonly known as shiitake, ranks as the second most cultivated edible mushroom worldwide and is particularly prominent in East Asian cuisine and traditional medicine. Its fruiting bodies and mycelia are rich sources of bioactive compounds including beta-glucans (notably lentinan with a beta-(1->3)-D-glucan backbone and beta-(1->6) branches), eritadenine, and ergosterol. Commercial production relies primarily on solid-substrate cultivation using sawdust supplemented with nutritional additives, though submerged liquid fermentation offers advantages for rapid mycelium and polysaccharide production under controlled conditions.",
+          "methods": "Literature from 1960 to 2024 was systematically reviewed. Data on carbon and nitrogen metabolism during vegetative growth were compiled from biochemical and transcriptomic studies. Cultivar genealogies were reconstructed from molecular marker datasets covering two nuclear genome assemblies and one mitochondrial genome assembly.",
+          "results": "Carbon utilization: L. edodes mycelia preferentially utilize hexoses (glucose, fructose) over pentoses, though xylose supports growth at reduced rates. Disaccharides such as sucrose and maltose require extracellular hydrolysis; sucrose supported the highest mycelial biomass among tested sugars in several reports. Polymeric carbon sources (cellulose, hemicellulose, lignin) from sawdust substrates are degraded by a suite of extracellular enzymes including cellulases, xylanases, and manganese peroxidases. Nitrogen utilization: Organic nitrogen sources (peptone, yeast extract, amino acids) generally outperform inorganic sources (ammonium salts, nitrates) for both biomass and polysaccharide yield. Among inorganic sources, ammonium sulfate supports moderate growth, while nitrate sources often cause pH drift that inhibits mycelial development. C/N ratios between 10:1 and 20:1 are most frequently reported as optimal for beta-glucan production.",
+          "discussion": "The interplay between carbon and nitrogen metabolism drives beta-glucan biosynthesis through UDP-glucose availability. Nitrogen limitation after the exponential growth phase has been shown to trigger secondary metabolite production including lentinan. Future work should focus on integrated multi-omics approaches to optimize media composition for both biomass and bioactive compound yields simultaneously."
+        },
+        "tables": [
+          {
+            "caption": "Table 1. Effect of carbon sources on mycelial biomass of Lentinula edodes in submerged culture (compiled from multiple studies)",
+            "rows": [
+              ["Carbon source", "Concentration (g/L)", "Biomass (g/L DW)", "Reference"],
+              ["Glucose", "20", "4.8-6.9", "Feng et al. 2010"],
+              ["Sucrose", "20", "5.2-7.1", "Kim et al. 2005"],
+              ["Fructose", "20", "4.1-5.8", "Osman et al. 2009"],
+              ["Maltose", "20", "3.2-4.5", "Osman et al. 2009"],
+              ["Starch (soluble)", "20", "2.8-3.9", "Kim et al. 2005"],
+              ["Lactose", "20", "1.1-1.8", "Osman et al. 2009"]
+            ]
+          },
+          {
+            "caption": "Table 2. Effect of nitrogen sources on mycelial biomass and polysaccharide production in Lentinula edodes",
+            "rows": [
+              ["Nitrogen source", "Type", "Biomass (g/L)", "EPS (g/L)", "IPS (mg/g DW)"],
+              ["Yeast extract", "Organic", "6.9", "0.75", "125"],
+              ["Peptone", "Organic", "5.4", "0.58", "98"],
+              ["Soybean peptone", "Organic", "5.8", "0.62", "110"],
+              ["Urea", "Organic", "3.1", "0.22", "42"],
+              ["Ammonium sulfate", "Inorganic", "3.8", "0.31", "55"],
+              ["Ammonium nitrate", "Inorganic", "2.9", "0.18", "38"],
+              ["Potassium nitrate", "Inorganic", "2.2", "0.12", "28"]
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "pmid": "25868404",
+      "pmcid": null,
+      "doi": "10.1080/14786419.2015.1015022",
+      "title": "Optimised isolation of polysaccharides from Lentinula edodes strain NCBI JX915793 using response surface methodology and their antibacterial activities",
+      "authors": ["Bisen PS", "Baghel RK", "Prasad GBKS"],
+      "journal": "Natural Product Research",
+      "year": 2015,
+      "publication_types": ["Journal Article"],
+      "mesh_terms": ["Lentinula", "Polysaccharides", "Fermentation", "Anti-Bacterial Agents", "Response Surface Methodology"],
+      "abstract": "Mycelial growth in a defined medium by submerged fermentation is a rapid and alternative method for obtaining fungal biomass of consistent quality. Biomass, exopolysaccharides (EPS) and intracellular polysaccharides (IPS) production were optimised by response surface methodology in Lentinula edodes strain LeS (NCBI JX915793). The optimised conditions were pH 5.0, temperature 26 degrees C, incubation period of 25 days and agitation rate of 52 r/min for L. edodes strain LeS. Under the calculated optimal culture conditions, biomass production (5.88 mg mL(-1)), EPS production (0.40 mg mL(-1)) and IPS production (12.45 mg g(-1)) were in agreement with the predicted values for biomass (5.93 mg mL(-1)), EPS (0.55 mg mL(-1)) and IPS production (12.64 mg g(-1)). Crude lentinan exhibited highest antibacterial effects followed by alcoholic, crude and aqueous extracts.",
+      "fulltext": null
+    },
+    {
+      "pmid": "30533854",
+      "pmcid": "PMC6269588",
+      "doi": "10.22037/ijpr.2018.2299",
+      "title": "Optimization of Growth Conditions of Lentinus edodes Mycelium and Polysaccharides on Walnut Shell by-Products Using Response Surface Analysis",
+      "authors": ["Hamedi A", "Vahid H", "Ghanati F"],
+      "journal": "Iranian Journal of Pharmaceutical Research",
+      "year": 2018,
+      "publication_types": ["Journal Article"],
+      "mesh_terms": ["Lentinula", "Polysaccharides", "Solid State Fermentation", "Response Surface Methodology", "Agricultural By-Products"],
+      "abstract": "Lentinus edodes is one of the most widely used traditional Chinese medicines and a high producer of various bioactive compounds such as polysaccharides. The objective of this study was to optimize mycelium and polysaccharide production by L. edodes on walnut shell through a two-step procedure including a one-factor-at-a-time approach and response surface methodology design. Inoculum size, incubation time, and C/N ratio were selected for optimization. Among the five different C/N ratios examined (5 to 25), C/N ratio 10 was the most effective for enhancing the LEPLs production (43.67 mg/g) and biomass (0.053 mg/g) by L. edodes. Sucrose and yeast extracts were used to adjust the C/N ratios.",
+      "fulltext": {
+        "pmcid": "PMC6269588",
+        "sections": {
+          "introduction": "Edible mushrooms are commonly used for the development of drugs and nutraceuticals. Lentinus edodes is one of the most widely used traditional Chinese medicines and a high producer of various bioactive compounds that is frequently used in Asian countries such as China, Korea, and Japan. Among the various bioactive components of L. edodes, polysaccharides have been identified as the major bioactive compounds, which are associated with multiple pharmacological effects including antitumor, immunomodulatory, and antioxidant activities.",
+          "methods": "Walnut shell by-products (WSB) were prepared as solid substrate. Based on the total carbon and total nitrogen in WSB, the C/N ratio was calculated. C/N ratios of media from 5 to 25 were packed in 250 mL flasks and tested for biomass and LEPLs production. Sucrose and yeast extract were used to adjust the C/N ratios. Mycelium of L. edodes was inoculated and cultivated at 25 degrees C for 30 days. Biomass was determined gravimetrically after drying at 60 degrees C to constant weight. Polysaccharides (LEPLs) were extracted with hot water followed by ethanol precipitation and quantified by phenol-sulfuric acid method.",
+          "results": "All selected C/N ratios resulted in good mycelial growth and product yield. Among the five different C/N ratios examined, C/N ratio 10 was the most effective for enhancing LEPLs production (43.67 mg/g) and biomass (0.053 mg/g). Both biomass and LEPLs production increased with C/N ratio from 5 to 10 and then decreased at higher ratios. Response surface methodology identified optimal conditions of inoculum size 8%, incubation time 28 days, and C/N ratio 10 for maximal polysaccharide yield. Statistical analyses were performed by ANOVA with Tukey's multiple comparisons test (p < 0.05).",
+          "discussion": "The optimal C/N ratio of 10 for L. edodes on walnut shell differs from reports on submerged liquid culture where C/N ratios of 15-20 are often optimal, likely reflecting the slower nutrient availability in solid-state fermentation. WSB was low priced and biologically effective as an energy source, making this approach attractive for valorization of agricultural waste."
+        },
+        "tables": [
+          {
+            "caption": "Table 1. Effect of C/N ratio on biomass and LEPLs production in Lentinus edodes on walnut shell by-products",
+            "rows": [
+              ["C/N ratio", "Biomass (mg/g substrate)", "LEPLs (mg/g substrate)"],
+              ["5", "0.031", "28.4"],
+              ["10", "0.053", "43.67"],
+              ["15", "0.048", "39.2"],
+              ["20", "0.042", "34.1"],
+              ["25", "0.035", "29.8"]
+            ]
+          },
+          {
+            "caption": "Table 2. RSM optimized conditions and validation",
+            "rows": [
+              ["Variable", "Optimal value", "Range tested"],
+              ["Inoculum size", "8%", "4-12%"],
+              ["Incubation time", "28 days", "14-35 days"],
+              ["C/N ratio", "10", "5-25"],
+              ["Predicted biomass (mg/g)", "0.055", "-"],
+              ["Actual biomass (mg/g)", "0.053", "-"],
+              ["Predicted LEPLs (mg/g)", "44.8", "-"],
+              ["Actual LEPLs (mg/g)", "43.67", "-"]
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "pmid": "26675911",
+      "pmcid": null,
+      "doi": null,
+      "title": "Influence of nitrogen sources on the enzymatic activity and grown by Lentinula edodes in biomass Eucalyptus benthamii",
+      "authors": ["Chicatto JA", "Costa AS", "Helm CV", "Tavares LBB"],
+      "journal": "Brazilian Journal of Biology",
+      "year": 2015,
+      "publication_types": ["Journal Article"],
+      "mesh_terms": ["Lentinula", "Nitrogen", "Enzymes", "Eucalyptus", "Biomass"],
+      "abstract": "Lignocellulose is the most abundant environmental component and a renewable organic resource in soil. The objective of this research was to analyze the effect of three nitrogen resources (ammonium sulfate, saltpetre, soybean) in the holocellulolitic activity of Lentinula edodes EF 50 using as substrate sawdust E. benthamii. An experimental design mixture was applied with repetition in the central point consisting of seven treatments of equal concentrations of nitrogen in ammonium sulfate, potassium nitrate and soybean. The enzymatic activity of avicelase, carboxymetilcellulase, beta-glucosidase, xylanases and manganese peroxidase was determined. The humidity, pH, water activity and qualitative analysis of mycelial growth at 8 time points of cultivation were evaluated. Soybean as nitrogen source provided the highest beta-glucosidase activity and mycelial density compared to inorganic sources.",
+      "fulltext": null
+    },
+    {
+      "pmid": "15859464",
+      "pmcid": null,
+      "doi": null,
+      "title": "Effect of culture medium composition on the activity of extracellular lectins of Lentinus edodes",
+      "authors": ["Tsivileva OM", "Nikitina VE", "Garibova LV"],
+      "journal": "Mikrobiologiia",
+      "year": 2005,
+      "publication_types": ["Journal Article"],
+      "mesh_terms": ["Lentinula", "Lectins", "Culture Media", "Carbon", "Nitrogen", "Hydrogen-Ion Concentration"],
+      "abstract": "The time course of lectin production in culture liquid of the basidial fungus Lentinus edodes strain F-249 in different media under the conditions of submerged culture was studied. The activity of agglutinins depended on the ratio between carbon and nitrogen sources and the pH of the culture medium. The activity of lectin in culture medium was maximal when the fungus was grown in a medium containing L-arabinose as a source of carbon and L-asparagine as a source of nitrogen (C:N ratio, 9.5-12:1) on day 15-18 of culturing at pH 8-9. Glucose and sucrose as carbon sources yielded intermediate lectin activity, while starch supported the lowest activity. Among nitrogen sources, L-asparagine and glutamic acid supported higher activity than ammonium salts.",
+      "fulltext": null
+    },
+    {
+      "pmid": "19800423",
+      "pmcid": null,
+      "doi": "10.1016/j.bej.2009.09.006",
+      "title": "Statistical optimization of media for mycelial growth and exo-polysaccharide production by Lentinus edodes and a kinetic model study of two growth morphologies",
+      "authors": ["Feng YL", "Li WQ", "Wu XQ", "Cheng JW", "Ma SY"],
+      "journal": "Biochemical Engineering Journal",
+      "year": 2010,
+      "publication_types": ["Journal Article"],
+      "mesh_terms": ["Lentinula", "Polysaccharides", "Fermentation", "Models Statistical", "Culture Media"],
+      "abstract": "Lentinus edodes is a well-known medicinal and edible mushroom throughout the world. Statistical optimization was employed to optimize the culture medium for maximum mycelial growth and exo-polysaccharide (EPS) production in submerged fermentation. Plackett-Burman design (PBD) was applied to determine significant factors, followed by paths of steepest ascent and Box-Behnken design (BBD) to obtain the final optimum culture medium composition. Glucose, yeast-powder and pH were significant for fermentation. 15.4 g glucose and 5.32 g yeast-powder per liter and pH 4.61 were optimum for biomass accumulation, improving it from 2.75 g/L to 6.88 g/L, while 15.78 g glucose and 5.86 g yeast-powder per liter and pH 4.48 were optimum for EPS production, improving it from 0.214 g/L to 0.751 g/L. Under the optimized cultivation condition, cultivation kinetic models were studied in flask (pellet growth form) and airlift (filamentous growth form) reactors.",
+      "fulltext": null
+    },
+    {
+      "pmid": "40195441",
+      "pmcid": "PMC12074089",
+      "doi": "10.3390/jof11050347",
+      "title": "Screening of Lentinula edodes Strains for High Polysaccharide Production and In Vitro Antioxidant Activities",
+      "authors": ["Liu X", "Chen J", "Zhang Y", "Wang L"],
+      "journal": "Journal of Fungi",
+      "year": 2025,
+      "publication_types": ["Journal Article"],
+      "mesh_terms": ["Lentinula", "Polysaccharides", "Antioxidants", "Fermentation"],
+      "abstract": "Lentinan is one of the main metabolites of Lentinula edodes and exhibits numerous biological properties such as antitumor and antioxidant activity. Despite recent advancements, its commercialization remains constrained by a lengthy cultivation cycle, low yield, and high cost. In this study, the mycelial polysaccharide content and in vitro antioxidant activity of 18 L. edodes strains were evaluated under shaking and static culture conditions. Strain XG21 demonstrated superior polysaccharide production with a total polysaccharide content of 78.80 mg in 50 mL culture medium, 1.82 times higher than the main cultivated strain Xin808 (43.30 mg). Strain XG24 demonstrated the highest mycelial biomass (0.55 g/50mL), 1.29 times greater than Xin808. Seven strains showed intracellular polysaccharide concentrations above 15 mg/g, with strains XG20 and XG21 displaying the highest IPS levels at 21.75 mg/g and 17.97 mg/g, respectively.",
+      "fulltext": {
+        "pmcid": "PMC12074089",
+        "sections": {
+          "introduction": "Lentinan, the main secondary metabolite of L. edodes, is a polysaccharide characterized by a beta-(1->3)-D-glucan main chain with beta-(1->6) branches. Traditionally extracted from fruiting bodies, its production is time-intensive and inconsistent. Extraction from mycelium via submerged fermentation represents a promising alternative, and strain selection is critical for efficient production of biomass and bioactive compounds.",
+          "methods": "For strain preservation and activation, Potato Sucrose Agar medium was prepared with 200 g potato, 20 g glucose, 20 g agar, and distilled water to 1 L. Three activated plugs (5 mm diameter) were inoculated into 50 mL of fermentation medium consisting of 35 g sucrose, 5 g peptone, 2.5 g yeast powder, 1 g KH2PO4, 0.5 g MgSO4.7H2O, and 0.5 g vitamin B1 per liter, adjusted to pH 7.0. Cultures were incubated under shaking (150 rpm for 39 days at 25 degrees C after 1 day static) and static (25 degrees C for 40 days) conditions, each in triplicate. Mycelium was filtered, rinsed three times with distilled water, and dried at 60 degrees C to constant weight. Intracellular polysaccharides were extracted from dried mycelium by hot water, while extracellular polysaccharides were precipitated from culture filtrate with ethanol.",
+          "results": "Among 18 strains cultivated, six strains exhibited mycelial biomass over 0.2 g in 50 mL culture medium after 39 days of shaking culture. Strain XG24 demonstrated the highest mycelial biomass (0.55 g), 1.29 times greater than reference strain Xin808 (0.43 g). Seven strains showed IPS concentrations above 15 mg/g, with strains XG20 and XG21 displaying the highest IPS levels at 21.75 mg/g and 17.97 mg/g. Strain XG21 demonstrated superior total polysaccharide production (78.80 mg per 50 mL), 1.82 times higher than Xin808 (43.30 mg). Static culture generally produced lower biomass but higher IPS concentration per unit biomass compared to shaking culture.",
+          "discussion": "The significant variation among 18 strains (biomass ranging 0.08-0.55 g, IPS 4.2-21.75 mg/g) under identical media composition highlights strain selection as a critical lever for fermentation performance. The observation that XG21 excelled in polysaccharide while XG24 excelled in biomass suggests these traits are partially decoupled and may be pursued independently depending on downstream application."
+        },
+        "tables": [
+          {
+            "caption": "Table 1. Media composition used for submerged fermentation screening",
+            "rows": [
+              ["Component", "Amount (g/L)", "Function"],
+              ["Sucrose", "35", "Carbon source"],
+              ["Peptone", "5", "Organic nitrogen"],
+              ["Yeast powder", "2.5", "Organic nitrogen + growth factors"],
+              ["KH2PO4", "1", "Phosphate"],
+              ["MgSO4.7H2O", "0.5", "Mineral"],
+              ["Vitamin B1", "0.5", "Cofactor"]
+            ]
+          },
+          {
+            "caption": "Table 2. Biomass and polysaccharide production of selected high-performing Lentinula edodes strains under shaking culture (39 days, 25 C, 150 rpm)",
+            "rows": [
+              ["Strain", "Biomass (g/50mL)", "IPS (mg/g DW)", "EPS (mg/50mL)", "Total polysaccharide (mg/50mL)"],
+              ["Xin808 (reference)", "0.43", "11.8", "38.2", "43.30"],
+              ["XG20", "0.38", "21.75", "42.1", "50.4"],
+              ["XG21", "0.42", "17.97", "71.3", "78.80"],
+              ["XG24", "0.55", "14.2", "48.5", "56.3"],
+              ["XG18", "0.31", "16.8", "35.2", "40.4"],
+              ["XG15", "0.22", "15.5", "28.9", "32.3"]
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "pmid": "38644753",
+      "pmcid": "PMC11042560",
+      "doi": "10.1080/12298093.2024.2350207",
+      "title": "Enhancing Eritadenine Production in Submerged Cultures of Shiitake (Lentinula edodes Berk. Pegler) Using Blue LED Light and Activated Charcoal",
+      "authors": ["Hernandez-Rodriguez L", "Vazquez-Vazquez C", "Camacho-Corona MR"],
+      "journal": "Mycobiology",
+      "year": 2024,
+      "publication_types": ["Journal Article"],
+      "mesh_terms": ["Lentinula", "Adenine", "Light", "Fermentation", "Nitrogen"],
+      "abstract": "Eritadenine from shiitake mushroom is a secondary metabolite with hypocholesterolemic, hypotensive and antiparasitic properties. Eritadenine is obtained from submerged mycelial cultures of shiitake, but actual yields remain unsatisfactory for industrial applications. In this study, green and blue LED lights were tested to increase yields of eritadenine in submerged cultures of shiitake. Blue LEDs increased yields by 13-14 times, reaching 165.7 mg/L, compared to darkness (11.2 mg/L) and green light (12.1 mg/L). Nitrogen sources yeast extract and peptone at 2 g/L increased eritadenine production: yeast extract promoted 22.6 mg/L while peptone promoted 18.3 mg/L. In contrast, carbon sources (sucrose and starch) and salts (KH2PO4 and MgSO4) did not promote eritadenine production. The recovery of eritadenine was evaluated using amberlite and activated charcoal adsorption isotherms.",
+      "fulltext": {
+        "pmcid": "PMC11042560",
+        "sections": {
+          "introduction": "Eritadenine, a purine alkaloid-like secondary metabolite, is primarily found in shiitake mushroom and in smaller quantities in other higher basidiomycetes. It possesses hypocholesterolemic, hypotensive, and antiparasitic bioactivities. Submerged mycelial fermentation offers controlled production but current yields are suboptimal. This study examined light spectrum (green/blue LED vs darkness) and nitrogen source effects on eritadenine accumulation.",
+          "methods": "Lentinula edodes mycelia were cultivated in 250 mL Erlenmeyer flasks containing 100 mL medium at 25 degrees C, 120 rpm for 14 days. Base medium: 20 g/L sucrose, 2 g/L KH2PO4, 0.5 g/L MgSO4.7H2O. Nitrogen source variables: yeast extract (YE) at 1 or 2 g/L and peptone at 1 or 2 g/L. Light conditions: darkness, green LED (520 nm), and blue LED (460 nm) at 50 lumens for 12 h/day. Eritadenine was extracted with methanol-water and quantified by HPLC at 260 nm. Biomass was determined gravimetrically after drying at 60 C.",
+          "results": "Blue LEDs increased eritadenine yields by 13-14 times compared to darkness (165.7 vs 11.2 mg/L). Green light showed no significant effect (12.1 mg/L). Among nitrogen sources at 2 g/L, yeast extract produced the highest eritadenine yield (22.6 mg/L) followed by peptone (18.3 mg/L). Carbon sources (sucrose, starch) and salts (KH2PO4, MgSO4) did not significantly promote eritadenine production. Biomass yields ranged 4.8-6.2 g/L across treatments and correlated poorly with eritadenine yield, suggesting that eritadenine is a late-stage secondary metabolite decoupled from primary growth.",
+          "discussion": "The dramatic response to blue light suggests photoreceptor-mediated regulation of eritadenine biosynthesis. The preference for yeast extract over peptone may reflect the micronutrient content of YE including vitamins and amino acids that support purine metabolism. That carbon sources did not promote eritadenine synthesis while nitrogen sources did is consistent with the nitrogen-containing nature of this alkaloid."
+        },
+        "tables": [
+          {
+            "caption": "Table 1. Effect of nitrogen sources on eritadenine and biomass yield (blue LED, 14 days)",
+            "rows": [
+              ["Nitrogen source", "Concentration (g/L)", "Biomass (g/L)", "Eritadenine (mg/L)"],
+              ["Yeast extract", "1", "4.9", "15.4"],
+              ["Yeast extract", "2", "5.8", "22.6"],
+              ["Peptone", "1", "4.8", "12.8"],
+              ["Peptone", "2", "5.4", "18.3"],
+              ["Control (no added N)", "0", "2.1", "3.2"]
+            ]
+          },
+          {
+            "caption": "Table 2. Effect of light conditions on eritadenine yield (yeast extract 2 g/L, 14 days)",
+            "rows": [
+              ["Light condition", "Wavelength (nm)", "Eritadenine (mg/L)", "Fold increase vs dark"],
+              ["Darkness", "-", "11.2", "1.0"],
+              ["Green LED", "520", "12.1", "1.08"],
+              ["Blue LED", "460", "165.7", "14.8"]
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "pmid": "30904504",
+      "pmcid": null,
+      "doi": "10.1016/j.ijbiomac.2019.03.023",
+      "title": "Mycelial polysaccharides of Lentinus edodes (shiitake mushroom) in submerged culture exert immunoenhancing effect on macrophage cells via MAPK pathway",
+      "authors": ["Wang T", "He HH", "Liu XL", "Liu CQ", "Liang YX", "Mei YX"],
+      "journal": "International Journal of Biological Macromolecules",
+      "year": 2019,
+      "publication_types": ["Journal Article"],
+      "mesh_terms": ["Lentinula", "Polysaccharides", "Macrophages", "MAPK Signaling System", "Fermentation"],
+      "abstract": "Lentinus edodes mycelium is a rich source of bioactive polysaccharides. In this study, mycelial polysaccharides (LMP) were prepared from submerged cultures grown in medium containing 30 g/L glucose, 3 g/L peptone, and 2 g/L yeast extract at 25 degrees C, 150 rpm for 10 days, yielding biomass of 11.2 g/L DW and LMP of 156 mg/g DW. The polysaccharide fraction was characterized as a beta-(1->3)-glucan with beta-(1->6) branches by NMR and methylation analysis. LMP significantly enhanced the phagocytic activity of RAW264.7 macrophages and stimulated the production of TNF-alpha, IL-1-beta, and IL-6 in a dose-dependent manner. The immunoenhancing effect was mediated through activation of MAPK signaling pathways (ERK1/2, JNK, p38). These findings support the development of L. edodes submerged fermentation as an industrial source of immunomodulatory beta-glucans.",
+      "fulltext": null
+    },
+    {
+      "pmid": "36265546",
+      "pmcid": null,
+      "doi": "10.1016/j.ijbiomac.2022.10.062",
+      "title": "Active polysaccharides from Lentinula edodes and Pleurotus ostreatus by addition of corn straw and xylosma sawdust through solid-state fermentation",
+      "authors": ["Chen H", "Li W", "Zhang X", "Wang Y", "Liu J"],
+      "journal": "International Journal of Biological Macromolecules",
+      "year": 2022,
+      "publication_types": ["Journal Article"],
+      "mesh_terms": ["Lentinula", "Pleurotus", "Polysaccharides", "Fermentation", "Lignocellulose"],
+      "abstract": "This study investigated the effects of lignocellulosic substrate composition on active polysaccharide production by Lentinula edodes and Pleurotus ostreatus during solid-state fermentation. Corn straw (herbaceous) and xylosma sawdust (woody) were used as carbon source donors. For L. edodes, mycelial biomass reached 14.8 mg/g substrate with corn straw alone and 11.2 mg/g with xylosma alone, while a 1:1 mixture achieved 18.5 mg/g. Intracellular polysaccharide content was highest on the mixed substrate at 62.4 mg/g DW, with increased hydroxyl radical scavenging rate (78.3% at 1 mg/mL). Scanning electron microscopy, X-ray diffraction, and FTIR characterized the surface structure, crystallinity, and chemical structure of lignocellulose during fermentation. Cellulose and hemicellulose are sugar polymers linked by beta-1,4-glycosidic bonds, similar to the bond type of lentinan, suggesting that lignocellulose serves as both a physical support and a carbon source donor of beta-glycosidic bonds for exopolysaccharide synthesis.",
+      "fulltext": null
+    }
+  ]
+}
