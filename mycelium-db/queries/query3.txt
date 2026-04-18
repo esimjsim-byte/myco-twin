@@ -1,0 +1,1 @@
+("Lentinula edodes"[Title/Abstract] OR "Lentinus edodes"[Title/Abstract] OR "shiitake"[Title/Abstract]) AND ("solid-state"[Title/Abstract] OR "solid state"[Title/Abstract] OR "sawdust"[Title/Abstract] OR "substrate"[Title/Abstract]) AND ("carbon"[Title/Abstract] OR "nitrogen"[Title/Abstract] OR "growth"[Title/Abstract])

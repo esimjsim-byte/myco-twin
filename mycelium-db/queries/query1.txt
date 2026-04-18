@@ -1,0 +1,1 @@
+("Lentinula edodes"[Title/Abstract] OR "Lentinus edodes"[Title/Abstract] OR "shiitake"[Title/Abstract]) AND ("submerged"[Title/Abstract] OR "liquid culture"[Title/Abstract] OR "shake flask"[Title/Abstract] OR "fermentation"[Title/Abstract]) AND ("carbon"[Title/Abstract] OR "nitrogen"[Title/Abstract] OR "medium"[Title/Abstract] OR "culture condition"[Title/Abstract])

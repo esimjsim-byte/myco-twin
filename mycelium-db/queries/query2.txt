@@ -1,0 +1,1 @@
+("Lentinula edodes"[Title/Abstract] OR "Lentinus edodes"[Title/Abstract]) AND ("beta-glucan"[Title/Abstract] OR "lentinan"[Title/Abstract] OR "polysaccharide"[Title/Abstract] OR "exopolysaccharide"[Title/Abstract]) AND ("mycelial"[Title/Abstract] OR "mycelium"[Title/Abstract] OR "biomass"[Title/Abstract])
