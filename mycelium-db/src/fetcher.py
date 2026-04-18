@@ -460,7 +460,15 @@ def _build_cli() -> argparse.ArgumentParser:
         prog="python -m src.fetcher",
         description="Search PubMed and dump abstracts (+ PMC full-texts when available) as JSON.",
     )
-    parser.add_argument("--query", required=True, help="PubMed query string.")
+    query_group = parser.add_mutually_exclusive_group(required=True)
+    query_group.add_argument("--query", help="PubMed query string.")
+    query_group.add_argument(
+        "--query-file", type=Path,
+        help=(
+            "Path to a UTF-8 file whose contents are used as the PubMed query. "
+            "Handy when the shell mangles quotes/brackets (e.g. Windows PowerShell)."
+        ),
+    )
     parser.add_argument(
         "--max-results", type=int, default=50,
         help="Maximum number of PMIDs to fetch (default: 50).",
@@ -480,15 +488,32 @@ def _build_cli() -> argparse.ArgumentParser:
     return parser
 
 
+def _resolve_query(parser: argparse.ArgumentParser, args: argparse.Namespace) -> str:
+    """Return the effective PubMed query, reading ``--query-file`` if needed."""
+    if args.query is not None:
+        return args.query
+    path: Path = args.query_file
+    try:
+        raw = path.read_text(encoding="utf-8")
+    except FileNotFoundError:
+        parser.error(f"--query-file not found: {path}")
+    query = raw.strip()
+    if not query:
+        parser.error(f"--query-file is empty: {path}")
+    return query
+
+
 def main(argv: list[str] | None = None) -> int:
     """CLI entry point: search PubMed and write results to JSON."""
     logging.basicConfig(
         level=logging.INFO,
         format="%(asctime)s %(levelname)s %(name)s: %(message)s",
     )
-    args = _build_cli().parse_args(argv)
+    parser = _build_cli()
+    args = parser.parse_args(argv)
+    query = _resolve_query(parser, args)
 
-    pmids = search_pubmed(args.query, max_results=args.max_results, min_year=args.min_year)
+    pmids = search_pubmed(query, max_results=args.max_results, min_year=args.min_year)
     records = fetch_abstracts(pmids)
 
     fulltext_count = 0
@@ -506,7 +531,7 @@ def main(argv: list[str] | None = None) -> int:
                 fulltext_count += 1
 
     output: dict[str, Any] = {
-        "query": args.query,
+        "query": query,
         "min_year": args.min_year,
         "max_results": args.max_results,
         "pmid_count": len(pmids),
