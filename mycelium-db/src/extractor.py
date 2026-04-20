@@ -520,15 +520,164 @@ def validate_output(extracted: dict[str, Any]) -> list[str]:
     return warnings
 
 
+def _build_cli() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(
+        prog="python -m src.extractor",
+        description=(
+            "Extract structured cultivation-experiment data from fetcher-produced "
+            "papers using the Claude API. Writes JSONL (one paper per line)."
+        ),
+    )
+    parser.add_argument(
+        "--input", type=Path, required=True,
+        help="Input JSON file (dict with 'records' or 'papers' key, or bare list).",
+    )
+    parser.add_argument(
+        "--output", type=Path, required=True,
+        help="Output JSONL path.",
+    )
+    parser.add_argument(
+        "--only-pmc", action="store_true",
+        help="Process only papers that have a PMC full-text.",
+    )
+    parser.add_argument(
+        "--limit", type=int, default=None,
+        help="Process only the first N papers after filtering.",
+    )
+    parser.add_argument(
+        "--skip-existing", action="store_true",
+        help="Skip PMIDs that already appear in the output JSONL (resume mode).",
+    )
+    parser.add_argument(
+        "--dry-run", action="store_true",
+        help="Print prompts for the first 3 papers without calling the API.",
+    )
+    return parser
+
+
+def _load_existing_pmids(path: Path) -> set[str]:
+    pmids: set[str] = set()
+    if not path.exists():
+        return pmids
+    for line in path.read_text(encoding="utf-8").splitlines():
+        line = line.strip()
+        if not line:
+            continue
+        try:
+            rec = json.loads(line)
+        except json.JSONDecodeError:
+            continue
+        pmid = rec.get("pmid")
+        if isinstance(pmid, str) and pmid:
+            pmids.add(pmid)
+    return pmids
+
+
+def _run_dry(papers: list[dict[str, Any]]) -> None:
+    for i, paper in enumerate(papers[:3], start=1):
+        system, user = build_prompt(paper)
+        est_tokens = _estimate_tokens(system) + _estimate_tokens(user)
+        print(f"\n===== PAPER {i}: PMID {paper.get('pmid')} =====")
+        print(f"system prompt chars : {len(system)}")
+        print(f"user prompt chars   : {len(user)}")
+        print(f"estimated tokens    : {est_tokens}")
+        print("\n--- SYSTEM PROMPT ---")
+        print(system)
+        print("\n--- USER PROMPT ---")
+        print(user)
+
+
+def _status_marker(status: str) -> str:
+    return {
+        "success": "ok",
+        "partial": "partial",
+        "not_relevant": "skip",
+        "failed": "FAIL",
+    }.get(status, status)
+
+
 def main(argv: list[str] | None = None) -> int:
     """CLI entry point: iterate papers, call the API, write JSONL."""
-    # TODO: implement in 1-D
-    raise NotImplementedError
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)s %(levelname)s %(name)s: %(message)s",
+    )
+    parser = _build_cli()
+    args = parser.parse_args(argv)
 
+    papers = load_papers(args.input, only_pmc=args.only_pmc)
+    if args.limit is not None:
+        papers = papers[: args.limit]
 
-def _build_cli() -> argparse.ArgumentParser:
-    # TODO: implement in 1-D
-    raise NotImplementedError
+    if args.dry_run:
+        _run_dry(papers)
+        return 0
+
+    processed: set[str] = set()
+    if args.skip_existing:
+        processed = _load_existing_pmids(args.output)
+
+    api_key = os.getenv("ANTHROPIC_API_KEY")
+    if not api_key:
+        parser.error(
+            "ANTHROPIC_API_KEY is not set. Copy .env.example to .env and fill it in, "
+            "or export ANTHROPIC_API_KEY=sk-... before running."
+        )
+
+    from anthropic import Anthropic  # imported lazily so --dry-run stays dependency-light
+    from tqdm import tqdm
+
+    client = Anthropic(api_key=api_key)
+
+    pending = [p for p in papers if p.get("pmid") not in processed]
+
+    args.output.parent.mkdir(parents=True, exist_ok=True)
+    mode = "a" if args.skip_existing and args.output.exists() else "w"
+
+    started_at = datetime.now(timezone.utc).isoformat()
+    counts: dict[str, int] = {k: 0 for k in VALID_STATUSES}
+    total_cost = 0.0
+
+    total = len(pending)
+    with args.output.open(mode, encoding="utf-8") as fh, tqdm(
+        total=total, desc="extract", unit="paper"
+    ) as bar:
+        for idx, paper in enumerate(pending, start=1):
+            t0 = time.time()
+            result = extract_one(client, paper)
+            elapsed = time.time() - t0
+            status = result.get("extraction_status", "failed")
+            counts[status] = counts.get(status, 0) + 1
+            cost = (result.get("source") or {}).get("estimated_cost_usd", 0.0) or 0.0
+            total_cost += cost
+            fh.write(json.dumps(result, ensure_ascii=False) + "\n")
+            fh.flush()
+            bar.write(
+                f"[{idx}/{total}] PMID {paper.get('pmid')} "
+                f"{_status_marker(status)} | t={elapsed:.1f}s | "
+                f"est_cost=${total_cost:.4f}"
+            )
+            bar.update(1)
+
+    summary = {
+        "total_input": len(papers),
+        "processed": total,
+        "skipped_existing": len(papers) - total,
+        "success": counts.get("success", 0),
+        "partial": counts.get("partial", 0),
+        "failed": counts.get("failed", 0),
+        "not_relevant": counts.get("not_relevant", 0),
+        "started_at": started_at,
+        "completed_at": datetime.now(timezone.utc).isoformat(),
+        "model": MODEL_ID,
+        "total_estimated_cost_usd": round(total_cost, 4),
+    }
+    summary_path = args.output.parent / "extracted_summary.json"
+    summary_path.write_text(
+        json.dumps(summary, ensure_ascii=False, indent=2), encoding="utf-8"
+    )
+    _logger.info("wrote %s and %s", args.output, summary_path)
+    return 0
 
 
 if __name__ == "__main__":
