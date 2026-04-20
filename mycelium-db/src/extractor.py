@@ -315,25 +315,209 @@ def build_prompt(paper: dict[str, Any]) -> tuple[str, str]:
     return _SYSTEM_PROMPT, user
 
 
+def _estimate_tokens(text: str) -> int:
+    return max(1, len(text) // CHARS_PER_TOKEN)
+
+
+def _estimate_cost(input_tokens: int, output_tokens: int) -> float:
+    return (
+        input_tokens * INPUT_COST_USD_PER_MTOK
+        + output_tokens * OUTPUT_COST_USD_PER_MTOK
+    ) / 1_000_000
+
+
+def _parse_json_response(text: str) -> dict[str, Any]:
+    """Best-effort JSON parser: raw -> code-fence -> first '{' to last '}'."""
+    try:
+        return json.loads(text)
+    except json.JSONDecodeError:
+        pass
+    fence = re.search(r"```(?:json)?\s*(\{.*?\})\s*```", text, re.DOTALL)
+    if fence:
+        try:
+            return json.loads(fence.group(1))
+        except json.JSONDecodeError:
+            pass
+    start = text.find("{")
+    end = text.rfind("}")
+    if start != -1 and end > start:
+        try:
+            return json.loads(text[start : end + 1])
+        except json.JSONDecodeError:
+            pass
+    raise ValueError("response is not valid JSON")
+
+
+def _failed_record(paper: dict[str, Any], reason: str) -> dict[str, Any]:
+    return {
+        "pmid": paper.get("pmid"),
+        "extraction_status": "failed",
+        "relevance_score": 0.0,
+        "relevance_reason": "",
+        "study_metadata": {},
+        "experiments": [],
+        "analysis_notes": {},
+        "source": {
+            "section_used": [],
+            "extractor_model": MODEL_ID,
+            "extracted_at": datetime.now(timezone.utc).isoformat(),
+            "warnings": [reason],
+        },
+    }
+
+
 def extract_one(client: Any, paper: dict[str, Any]) -> dict[str, Any]:
     """Call Claude once for ``paper`` and return the parsed extraction.
 
     Retries the API call on transient errors (exponential backoff, up
     to :data:`_MAX_RETRIES`). On persistent failure returns a record
-    with ``extraction_status="failed"`` and the error in ``warnings``.
+    with ``extraction_status="failed"`` and the error in
+    ``source.warnings``.
     """
-    # TODO: implement in 1-C
-    raise NotImplementedError
+    system, user = build_prompt(paper)
+    pmid = paper.get("pmid", "")
+    response_text: str | None = None
+    usage = None
+    last_exc: Exception | None = None
+
+    for attempt in range(_MAX_RETRIES):
+        try:
+            message = client.messages.create(
+                model=MODEL_ID,
+                max_tokens=MAX_OUTPUT_TOKENS,
+                system=system,
+                messages=[{"role": "user", "content": user}],
+            )
+            response_text = "".join(
+                getattr(block, "text", "")
+                for block in getattr(message, "content", [])
+                if getattr(block, "type", None) == "text"
+            )
+            usage = getattr(message, "usage", None)
+            break
+        except Exception as exc:  # network, rate-limit, overloaded, etc.
+            last_exc = exc
+            if attempt == _MAX_RETRIES - 1:
+                break
+            backoff = 2 ** attempt
+            _logger.warning(
+                "API error on attempt %d/%d for PMID=%s: %s (retry in %ds)",
+                attempt + 1, _MAX_RETRIES, pmid, exc, backoff,
+            )
+            time.sleep(backoff)
+
+    if response_text is None:
+        return _failed_record(
+            paper, f"API call failed after {_MAX_RETRIES} attempts: {last_exc}"
+        )
+
+    try:
+        extracted = _parse_json_response(response_text)
+    except ValueError as exc:
+        rec = _failed_record(paper, f"JSON parse failed: {exc}")
+        rec["source"]["warnings"].append(
+            "raw_response_head=" + response_text[:300].replace("\n", " ")
+        )
+        return rec
+
+    extracted.setdefault("pmid", paper.get("pmid"))
+    input_tokens = (
+        int(getattr(usage, "input_tokens", 0) or 0) or _estimate_tokens(system + user)
+    )
+    output_tokens = (
+        int(getattr(usage, "output_tokens", 0) or 0) or _estimate_tokens(response_text)
+    )
+
+    source = extracted.get("source") or {}
+    source["extractor_model"] = MODEL_ID
+    source["extracted_at"] = datetime.now(timezone.utc).isoformat()
+    source.setdefault("section_used", [])
+    source.setdefault("warnings", [])
+    source["input_tokens"] = input_tokens
+    source["output_tokens"] = output_tokens
+    source["estimated_cost_usd"] = round(_estimate_cost(input_tokens, output_tokens), 6)
+    extracted["source"] = source
+
+    warnings = validate_output(extracted)
+    if warnings:
+        source["warnings"] = list(source.get("warnings", [])) + warnings
+        if extracted.get("extraction_status") == "success":
+            extracted["extraction_status"] = "partial"
+    return extracted
+
+
+def _is_iso8601(value: Any) -> bool:
+    if not isinstance(value, str) or not value:
+        return False
+    try:
+        datetime.fromisoformat(value.replace("Z", "+00:00"))
+        return True
+    except ValueError:
+        return False
 
 
 def validate_output(extracted: dict[str, Any]) -> list[str]:
-    """Check one extraction against the schema's validation rules.
+    """Check one extraction against the schema's seven validation rules.
 
     Returns a list of human-readable warning strings. Empty list means
     the record passes all seven rules.
     """
-    # TODO: implement in 1-C
-    raise NotImplementedError
+    warnings: list[str] = []
+    status = extracted.get("extraction_status")
+    if status not in VALID_STATUSES:
+        warnings.append(
+            f"extraction_status must be one of {sorted(VALID_STATUSES)}, got {status!r}"
+        )
+
+    score = extracted.get("relevance_score")
+    if not isinstance(score, (int, float)) or not 0.0 <= float(score) <= 1.0:
+        warnings.append(f"relevance_score must be a number in [0.0, 1.0], got {score!r}")
+
+    experiments = extracted.get("experiments")
+    if not isinstance(experiments, list):
+        warnings.append("experiments must be a list")
+        experiments = []
+
+    if status == "success":
+        has_both = any(
+            isinstance(exp, dict)
+            and exp.get("conditions")
+            and exp.get("outcomes")
+            for exp in experiments
+        )
+        if not has_both:
+            warnings.append(
+                "extraction_status=success requires >=1 experiment with both conditions and outcomes"
+            )
+    if status == "not_relevant" and experiments:
+        warnings.append("extraction_status=not_relevant requires empty experiments")
+
+    for i, exp in enumerate(experiments):
+        if not isinstance(exp, dict):
+            continue
+        cond = exp.get("conditions") or {}
+        carbon = cond.get("carbon_concentration_g_L")
+        if carbon is not None and (
+            not isinstance(carbon, (int, float)) or carbon <= 0
+        ):
+            warnings.append(
+                f"experiments[{i}].conditions.carbon_concentration_g_L must be positive if non-null, got {carbon!r}"
+            )
+        bg = exp.get("beta_glucan") or {}
+        pct = bg.get("total_value_pct_dw")
+        if pct is not None and (
+            not isinstance(pct, (int, float)) or not 0.0 <= float(pct) <= 100.0
+        ):
+            warnings.append(
+                f"experiments[{i}].beta_glucan.total_value_pct_dw must be in [0, 100] if non-null, got {pct!r}"
+            )
+
+    extracted_at = (extracted.get("source") or {}).get("extracted_at")
+    if extracted_at is not None and not _is_iso8601(extracted_at):
+        warnings.append(
+            f"source.extracted_at must be ISO 8601 parseable, got {extracted_at!r}"
+        )
+    return warnings
 
 
 def main(argv: list[str] | None = None) -> int:
