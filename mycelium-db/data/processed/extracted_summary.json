@@ -1,13 +1,13 @@
 {
-  "total_input": 8,
-  "processed": 8,
-  "skipped_existing": 0,
-  "success": 3,
-  "partial": 1,
-  "failed": 1,
-  "not_relevant": 3,
-  "started_at": "2026-04-21T06:46:50.687846+00:00",
-  "completed_at": "2026-04-21T06:49:48.588464+00:00",
+  "total_input": 55,
+  "processed": 0,
+  "skipped_existing": 55,
+  "success": 0,
+  "partial": 0,
+  "failed": 0,
+  "not_relevant": 0,
+  "started_at": "2026-04-21T21:55:47.923110+00:00",
+  "completed_at": "2026-04-21T21:55:47.955961+00:00",
   "model": "claude-opus-4-7",
-  "total_estimated_cost_usd": 1.9756
+  "total_estimated_cost_usd": 0.0
 }

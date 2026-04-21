@@ -25,7 +25,7 @@ load_dotenv()
 _logger = logging.getLogger(__name__)
 
 MODEL_ID = "claude-opus-4-7"
-MAX_OUTPUT_TOKENS = 4096
+MAX_OUTPUT_TOKENS = 8192
 MAX_INPUT_CHARS = 600_000  # ~150k tokens at ~4 chars/token
 CHARS_PER_TOKEN = 4
 INPUT_COST_USD_PER_MTOK = 15.0
