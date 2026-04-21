@@ -1,0 +1,13 @@
+{
+  "total_input": 5,
+  "processed": 5,
+  "skipped_existing": 0,
+  "success": 0,
+  "partial": 0,
+  "failed": 0,
+  "not_relevant": 5,
+  "started_at": "2026-04-21T00:36:42.105248+00:00",
+  "completed_at": "2026-04-21T00:37:17.406209+00:00",
+  "model": "claude-opus-4-7",
+  "total_estimated_cost_usd": 0.7809
+}
