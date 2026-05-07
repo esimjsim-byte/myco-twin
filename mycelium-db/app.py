@@ -1,7 +1,7 @@
-"""MYCO-TWIN — β-glucan Corpus Browser (stage 1 skeleton).
+﻿"""MYCO-TWIN — β-glucan Corpus Browser (Track A integration).
 
-Stage-1 scope: keyword search over the curated experiment table + embedded
-case-study charts. LLM/RAG features land in stage 2.
+Reads mycelium.db (24 papers, 131 experiments) and renders search +
+case-study charts. Track A and Track B unified.
 
 Run:
     streamlit run app.py
@@ -17,10 +17,8 @@ import streamlit.components.v1 as components
 
 REPO_ROOT = Path(__file__).resolve().parent
 sys.path.insert(0, str(REPO_ROOT / "scripts"))
+from load_from_db import load_curated  # noqa: E402
 
-from load_curated import load_curated  # noqa: E402
-
-CURATED_PATH = REPO_ROOT / "data" / "processed" / "extracted_curated.jsonl"
 FIG_DIR = REPO_ROOT / "docs" / "figures" / "case_40826246"
 
 KEEP_CRITERIA = [
@@ -48,38 +46,45 @@ TABS = [
 
 @st.cache_data
 def get_dataframe() -> pd.DataFrame:
-    return load_curated(CURATED_PATH)
+    return load_curated()
 
 
 def main() -> None:
-    st.set_page_config(page_title="MYCO-TWIN — β-glucan Corpus Browser", layout="wide")
+    st.set_page_config(
+        page_title="MYCO-TWIN — β-glucan Corpus Browser",
+        layout="wide",
+    )
     df = get_dataframe()
 
     st.title("MYCO-TWIN — β-glucan Corpus Browser")
     n_papers = df["pmid"].nunique()
     n_experiments = len(df)
-    st.caption(f"Curated dataset: {n_papers} paper, {n_experiments} experiments")
+    st.caption(f"Curated dataset: {n_papers} papers, {n_experiments} experiments")
 
     with st.sidebar:
         st.header("Dataset")
         st.metric("Papers", n_papers)
         st.metric("Experiments", n_experiments)
-        st.markdown("**KEEP criteria** (need 3+ of 4, no DROP override)")
+
+        st.markdown("**KEEP 기준** (4개 중 3개 이상 충족, DROP 없음)")
         for line in KEEP_CRITERIA:
             st.markdown(f"- {line}")
+
         st.markdown("---")
         st.markdown("**Source PMIDs**")
         for pmid in sorted(df["pmid"].unique()):
             st.markdown(f"- [PMID {pmid}](https://pubmed.ncbi.nlm.nih.gov/{pmid}/)")
 
     query = st.text_input(
-        "Search experiments",
+        "실험 검색",
         placeholder="예: β-glucan 높은 조건",
-        help="description 컬럼에 부분 일치 (대소문자 무시). 비워두면 전체 표시.",
+        help="description 컬럼에서 부분 일치 검색 (대소문자 무시). 비어있으면 전체 표시.",
     )
 
     if query.strip():
-        mask = df["description"].fillna("").str.contains(query.strip(), case=False, regex=False)
+        mask = df["description"].fillna("").str.contains(
+            query.strip(), case=False, regex=False
+        )
         view = df[mask]
         st.write(f"**{len(view)}** of {n_experiments} experiments match `{query}`")
     else:
@@ -97,7 +102,11 @@ def main() -> None:
         html_path = FIG_DIR / html_name
         with tab:
             if html_path.exists():
-                components.html(html_path.read_text(encoding="utf-8"), height=560, scrolling=True)
+                components.html(
+                    html_path.read_text(encoding="utf-8"),
+                    height=560,
+                    scrolling=True,
+                )
             else:
                 st.warning(f"Figure not found: {html_path}")
 
