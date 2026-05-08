@@ -1,4 +1,4 @@
-"""Load mycelium.db into a long-format DataFrame compatible with app.py.
+﻿"""Load mycelium.db into a long-format DataFrame compatible with app.py.
 
 Track A integration: replaces load_curated.py for the Streamlit app.
 Reads from data/processed/mycelium.db and returns the same column shape
@@ -22,7 +22,7 @@ from pathlib import Path
 
 import pandas as pd
 
-DB_PATH = Path("data/processed/mycelium.db")
+DB_PATH = Path(__file__).resolve().parent.parent / "data" / "processed" / "mycelium.db"
 
 # ---------- Description-parsing regex (reused from load_curated.py) ----------
 _BURST_FREQ_RE = re.compile(r"(\d+)\s*bursts?\b", re.IGNORECASE)
