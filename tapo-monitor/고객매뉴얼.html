@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tapo Monitor – 고객 설치·운영 매뉴얼</title>
+<style>
+  @page { size: A4; margin: 20mm; }
+  @media print {
+    body { font-size: 11pt; }
+    .no-print { display: none !important; }
+    h1, h2 { page-break-after: avoid; }
+    table, figure, .code-block { page-break-inside: avoid; }
+  }
+  * { box-sizing: border-box; }
+  body {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 32px 24px 60px;
+    font-family: "Malgun Gothic", "맑은 고딕", "Apple SD Gothic Neo", sans-serif;
+    color: #1a1a1a;
+    line-height: 1.75;
+    background: #fff;
+  }
+  h1 { font-size: 28px; border-bottom: 3px solid #0066cc; padding-bottom: 12px; margin-top: 0; }
+  h2 { font-size: 20px; color: #0066cc; margin-top: 48px; border-bottom: 1px solid #ddd; padding-bottom: 6px; }
+  h3 { font-size: 16px; margin-top: 28px; }
+  table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; }
+  th, td { border: 1px solid #ccc; padding: 8px 12px; text-align: left; }
+  th { background: #f0f4fa; font-weight: 600; }
+  .code-block {
+    background: #f5f5f5;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 14px 16px;
+    font-family: "Consolas", "D2Coding", monospace;
+    font-size: 13px;
+    overflow-x: auto;
+    white-space: pre;
+    margin: 12px 0;
+    line-height: 1.6;
+  }
+  .warn {
+    background: #fff8e6;
+    border-left: 4px solid #e6a817;
+    padding: 12px 16px;
+    margin: 16px 0;
+    border-radius: 0 6px 6px 0;
+    font-size: 14px;
+  }
+  .info {
+    background: #e8f4fd;
+    border-left: 4px solid #0066cc;
+    padding: 12px 16px;
+    margin: 16px 0;
+    border-radius: 0 6px 6px 0;
+    font-size: 14px;
+  }
+  .step { counter-increment: step; margin: 20px 0; }
+  .step::before {
+    content: counter(step);
+    display: inline-block;
+    width: 28px; height: 28px; line-height: 28px;
+    background: #0066cc; color: #fff;
+    border-radius: 50%; text-align: center;
+    font-weight: 700; font-size: 14px;
+    margin-right: 10px;
+  }
+  .cover { text-align: center; padding: 60px 0 40px; }
+  .cover h1 { border: none; font-size: 36px; }
+  .cover .subtitle { font-size: 18px; color: #555; margin-top: 8px; }
+  .cover .meta { margin-top: 32px; color: #888; font-size: 14px; }
+  .toc { background: #f8f9fa; padding: 20px 28px; border-radius: 8px; margin: 24px 0; }
+  .toc a { text-decoration: none; color: #0066cc; }
+  .toc a:hover { text-decoration: underline; }
+  .toc ol { padding-left: 20px; }
+  .toc li { margin: 6px 0; }
+  .btn-print {
+    position: fixed; top: 16px; right: 16px;
+    background: #0066cc; color: #fff; border: none;
+    padding: 10px 20px; border-radius: 6px;
+    font-size: 14px; cursor: pointer; font-weight: 600;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  }
+  .btn-print:hover { background: #0052a3; }
+  img.screenshot { max-width: 100%; border: 1px solid #ddd; border-radius: 6px; margin: 12px 0; }
+</style>
+</head>
+<body>
+
+<button class="btn-print no-print" onclick="window.print()">PDF로 저장 / 인쇄</button>
+
+<!-- ===== 표지 ===== -->
+<div class="cover">
+  <h1>Tapo Monitor<br>설치 · 운영 매뉴얼</h1>
+  <div class="subtitle">실시간 온습도 모니터링 및 자동 제어 시스템</div>
+  <div class="meta">
+    버전 1.0 &nbsp;|&nbsp; 2026년 6월<br>
+    문의: hw.kwon@sinsungo.co.kr
+  </div>
+</div>
+
+<!-- ===== 목차 ===== -->
+<div class="toc">
+  <strong>목 차</strong>
+  <ol>
+    <li><a href="#s1">시스템 개요</a></li>
+    <li><a href="#s2">설치 전 준비사항</a></li>
+    <li><a href="#s3">install.bat 실행 방법</a></li>
+    <li><a href="#s4">.env 파일 설정 방법</a></li>
+    <li><a href="#s5">프로그램 실행 (npm start)</a></li>
+    <li><a href="#s6">대시보드 접속 방법</a></li>
+    <li><a href="#s7">임계값 변경 방법</a></li>
+    <li><a href="#s8">Windows 자동 실행 설정</a></li>
+    <li><a href="#s9">문제 해결</a></li>
+    <li><a href="#s10">문의처</a></li>
+  </ol>
+</div>
+
+<!-- ===== 1. 시스템 개요 ===== -->
+<h2 id="s1">1. 시스템 개요</h2>
+<p>Tapo Monitor는 재배실의 온도·습도를 실시간으로 모니터링하고, 설정된 임계값을 초과하면 환풍기·가습기·FCU를 자동으로 ON/OFF 하는 시스템입니다.</p>
+
+<h3>주요 기능</h3>
+<table>
+  <tr><th>기능</th><th>설명</th></tr>
+  <tr><td>실시간 모니터링</td><td>9개 구역의 온도·습도를 웹 대시보드에서 실시간 확인</td></tr>
+  <tr><td>자동 제어 (Tapo)</td><td>TP-Link Tapo P100/P110 스마트플러그를 LAN으로 ON/OFF</td></tr>
+  <tr><td>자동 제어 (PLC)</td><td>Modbus TCP로 PLC 코일 제어 (FCU, 가습기, 환풍기)</td></tr>
+  <tr><td>구역별 임계값</td><td>구역마다 다른 온도·습도 기준 설정 가능</td></tr>
+  <tr><td>데이터 저장</td><td>SQLite DB에 측정 이력 자동 저장 (7일 보관)</td></tr>
+</table>
+
+<h3>시스템 구성도</h3>
+<div class="code-block">[온습도 센서] ──── [H100 허브] ──── [Tapo Monitor PC]
+                                          │
+                    ┌──────────────────────┼──────────────────────┐
+                    │                      │                      │
+             [Tapo 스마트플러그]      [PLC Modbus TCP]      [웹 대시보드]
+              환풍기 / 가습기        FCU / 가습기 / 환풍기    http://localhost:3000</div>
+
+<h3>자동 제어 동작 규칙</h3>
+<table>
+  <tr><th>조건</th><th>FCU (코일1)</th><th>가습기 (코일2 / plugIp2)</th><th>환풍기 (코일3 / plugIp1)</th></tr>
+  <tr><td>온도 &gt; TEMP_MAX</td><td>ON</td><td>—</td><td>ON</td></tr>
+  <tr><td>온도 &lt; TEMP_MIN</td><td>ON</td><td>—</td><td>OFF</td></tr>
+  <tr><td>습도 &gt; HUMID_MAX</td><td>—</td><td>OFF</td><td>ON</td></tr>
+  <tr><td>습도 &lt; HUMID_MIN</td><td>—</td><td>ON</td><td>—</td></tr>
+  <tr><td>정상 범위</td><td>OFF</td><td>현상 유지</td><td>OFF</td></tr>
+</table>
+
+
+<!-- ===== 2. 설치 전 준비사항 ===== -->
+<h2 id="s2">2. 설치 전 준비사항</h2>
+<p>아래 두 프로그램이 PC에 미리 설치되어 있어야 합니다.</p>
+
+<h3>2-1. Node.js 설치</h3>
+<div style="counter-reset: step;">
+  <div class="step">웹 브라우저에서 <strong>https://nodejs.org</strong> 에 접속합니다.</div>
+  <div class="step"><strong>LTS (장기 지원 버전)</strong> 다운로드 버튼을 클릭합니다.</div>
+  <div class="step">다운로드된 설치 파일을 실행하고 <strong>Next</strong>를 눌러 기본 설정으로 설치합니다.</div>
+  <div class="step">설치 완료 후 <strong>명령 프롬프트</strong>(cmd)를 열어 아래를 입력합니다:</div>
+</div>
+<div class="code-block">node --version
+npm --version</div>
+<p>각각 버전 번호가 출력되면 정상입니다. (예: <code>v22.x.x</code>, <code>10.x.x</code>)</p>
+
+<h3>2-2. Git 설치</h3>
+<div style="counter-reset: step;">
+  <div class="step">웹 브라우저에서 <strong>https://git-scm.com/download/win</strong> 에 접속합니다.</div>
+  <div class="step"><strong>Click here to download</strong> 링크를 클릭합니다.</div>
+  <div class="step">다운로드된 설치 파일을 실행하고 기본 설정으로 설치합니다.</div>
+  <div class="step">설치 완료 후 명령 프롬프트에서 아래를 입력합니다:</div>
+</div>
+<div class="code-block">git --version</div>
+<p><code>git version 2.x.x</code> 형태로 출력되면 정상입니다.</p>
+
+<div class="warn">
+  <strong>참고:</strong> 두 프로그램 모두 설치 후 명령 프롬프트를 <strong>새로 열어야</strong> PATH가 적용됩니다. 기존에 열어두었던 cmd 창에서는 인식되지 않을 수 있습니다.
+</div>
+
+
+<!-- ===== 3. install.bat 실행 ===== -->
+<h2 id="s3">3. install.bat 실행 방법</h2>
+<div style="counter-reset: step;">
+  <div class="step">전달받은 <strong>install.bat</strong> 파일을 바탕화면(또는 원하는 폴더)에 놓습니다.</div>
+  <div class="step"><strong>install.bat</strong> 파일을 <strong>더블클릭</strong>합니다.</div>
+  <div class="step">검은 창(명령 프롬프트)이 열리면서 자동으로 아래 작업이 수행됩니다:
+    <ul>
+      <li>Git / Node.js 설치 여부 확인</li>
+      <li>GitHub에서 프로젝트 소스 코드 다운로드</li>
+      <li>필요한 패키지(npm) 자동 설치</li>
+      <li>.env 환경설정 파일 자동 생성</li>
+      <li>TypeScript 빌드</li>
+    </ul>
+  </div>
+  <div class="step">"<strong>설치가 완료되었습니다!</strong>" 메시지가 나오면 아무 키나 눌러 종료합니다.</div>
+</div>
+
+<div class="info">
+  <strong>설치 결과 폴더:</strong><br>
+  바탕화면에서 실행한 경우 → <code>바탕화면\myco-twin\tapo-monitor\</code><br>
+  이미 tapo-monitor 폴더 안에서 실행한 경우 → 해당 폴더에 바로 설치 (중복 생성 안 됨)
+</div>
+
+<div class="warn">
+  <strong>"git clone 실패" 오류가 뜨는 경우:</strong><br>
+  ① 인터넷 연결을 확인하세요.<br>
+  ② GitHub 저장소가 비공개(private)라면 GitHub 계정 인증이 필요합니다. 담당자에게 문의하세요.
+</div>
+
+
+<!-- ===== 4. .env 설정 ===== -->
+<h2 id="s4">4. .env 파일 설정 방법</h2>
+<p>install.bat이 자동 생성한 <code>.env</code> 파일을 메모장(또는 VS Code)으로 열어 실제 값을 입력합니다.</p>
+
+<h3>파일 위치</h3>
+<div class="code-block">myco-twin\tapo-monitor\.env</div>
+
+<div class="warn">
+  <strong>주의:</strong> <code>.env</code> 파일은 탐색기에서 보이지 않을 수 있습니다.<br>
+  탐색기 상단 → <strong>보기</strong> → <strong>"숨김 항목"</strong> 체크를 켜거나,<br>
+  명령 프롬프트에서 <code>notepad .env</code> 를 입력해 직접 열 수 있습니다.
+</div>
+
+<h3>4-1. 필수 설정 (계정 / IP)</h3>
+<table>
+  <tr><th>항목</th><th>설명</th><th>예시</th></tr>
+  <tr><td>TAPO_EMAIL</td><td>Tapo 앱 로그인 이메일</td><td>hw.kwon@sinsungo.co.kr</td></tr>
+  <tr><td>TAPO_PASSWORD</td><td>Tapo 앱 로그인 비밀번호</td><td>(실제 비밀번호 입력)</td></tr>
+  <tr><td>HUB_IP</td><td>H100 허브의 로컬 IP</td><td>192.168.0.100</td></tr>
+  <tr><td>PLUG_IP_1</td><td>환풍기 스마트플러그 IP</td><td>192.168.0.101</td></tr>
+  <tr><td>PLUG_IP_2</td><td>가습기 스마트플러그 IP</td><td>192.168.0.102</td></tr>
+</table>
+
+<div class="info">
+  <strong>IP 확인 방법:</strong><br>
+  ① Tapo 앱 → 각 기기 선택 → 기기 정보에서 IP 확인<br>
+  ② 또는 공유기 관리자 페이지 → DHCP 클라이언트 목록에서 "Tapo" 이름 검색
+</div>
+
+<h3>4-2. PLC 설정</h3>
+<table>
+  <tr><th>항목</th><th>설명</th><th>기본값</th></tr>
+  <tr><td>PLC_IP</td><td>PLC의 로컬 IP</td><td>192.168.0.50</td></tr>
+  <tr><td>PLC_PORT</td><td>Modbus TCP 포트</td><td>502</td></tr>
+  <tr><td>PLC_COIL_FCU</td><td>FCU 코일 번호</td><td>1</td></tr>
+  <tr><td>PLC_COIL_HUMIDIFIER</td><td>가습기 코일 번호</td><td>2</td></tr>
+  <tr><td>PLC_COIL_VENTILATION</td><td>환풍기 코일 번호</td><td>3</td></tr>
+</table>
+
+<h3>4-3. 구역별 이름 설정</h3>
+<div class="code-block">ZONE_COUNT=9
+
+SENSOR_1_NAME=1구역
+SENSOR_2_NAME=2구역
+SENSOR_3_NAME=3구역
+...
+SENSOR_9_NAME=9구역</div>
+<p>구역 이름은 자유롭게 바꿀 수 있습니다. 대시보드 카드에 이 이름이 표시됩니다.</p>
+
+<h3>4-4. 구역별 임계값 설정 (선택)</h3>
+<p>특정 구역에만 다른 임계값을 적용하려면 아래처럼 추가합니다:</p>
+<div class="code-block"># 2구역만 더 엄격한 기준 적용
+SENSOR_2_TEMP_MAX=26
+SENSOR_2_TEMP_MIN=20
+SENSOR_2_HUMID_MAX=90
+SENSOR_2_HUMID_MIN=60</div>
+<p>설정하지 않은 구역은 전역 기본값 (<code>TEMP_MAX</code>, <code>TEMP_MIN</code>, <code>HUMID_MAX</code>, <code>HUMID_MIN</code>)을 자동으로 사용합니다.</p>
+
+
+<!-- ===== 5. 프로그램 실행 ===== -->
+<h2 id="s5">5. 프로그램 실행 (npm start)</h2>
+<div style="counter-reset: step;">
+  <div class="step">명령 프롬프트(cmd)를 엽니다.</div>
+  <div class="step">tapo-monitor 폴더로 이동합니다:</div>
+</div>
+<div class="code-block">cd %USERPROFILE%\Desktop\myco-twin\tapo-monitor</div>
+<div style="counter-reset: step 2;">
+  <div class="step">프로그램을 빌드하고 실행합니다:</div>
+</div>
+<div class="code-block">npm run build
+npm start</div>
+<div style="counter-reset: step 3;">
+  <div class="step">아래와 비슷한 메시지가 나오면 정상입니다:</div>
+</div>
+<div class="code-block">Dashboard: http://localhost:3000
+tapo-monitor started (poll=60000ms)</div>
+
+<div class="warn">
+  <strong>프로그램을 종료</strong>하려면 명령 프롬프트에서 <strong>Ctrl + C</strong> 를 누릅니다.
+</div>
+
+
+<!-- ===== 6. 대시보드 접속 ===== -->
+<h2 id="s6">6. 대시보드 접속 방법</h2>
+<div style="counter-reset: step;">
+  <div class="step">프로그램이 실행 중인 상태에서 웹 브라우저(Chrome 권장)를 엽니다.</div>
+  <div class="step">주소창에 아래를 입력합니다:</div>
+</div>
+<div class="code-block">http://localhost:3000</div>
+
+<h3>대시보드 화면 구성</h3>
+<table>
+  <tr><th>영역</th><th>설명</th></tr>
+  <tr><td>상단 헤더</td><td>전체 경보 요약 ("정상 9/9" 또는 "임계값 초과: N개 구역"), 실시간 연결 상태</td></tr>
+  <tr><td>9개 카드</td><td>각 구역의 현재 온도·습도. 임계값 초과 시 빨간 테두리 + "경보" 표시</td></tr>
+  <tr><td>하단 그래프</td><td>선택한 구역의 시간별 온도·습도 변화 (1시간/6시간/24시간 선택 가능)</td></tr>
+</table>
+
+<div class="info">
+  <strong>실시간 갱신:</strong> 대시보드는 SSE(Server-Sent Events)로 자동 업데이트됩니다.<br>
+  우측 상단 "● live"가 초록색이면 정상입니다. "재연결 중"이면 프로그램이 꺼져 있는지 확인하세요.
+</div>
+
+
+<!-- ===== 7. 임계값 변경 ===== -->
+<h2 id="s7">7. 임계값 변경 방법</h2>
+
+<h3>전역 임계값 (전체 구역 기본값)</h3>
+<p><code>.env</code> 파일에서 아래 항목을 수정합니다:</p>
+<div class="code-block">TEMP_MAX=28       # 온도 상한 (°C) - 초과 시 환풍기 ON
+TEMP_MIN=18       # 온도 하한 (°C) - 미달 시 FCU ON
+HUMID_MAX=95      # 습도 상한 (%) - 초과 시 가습기 OFF, 환풍기 ON
+HUMID_MIN=50      # 습도 하한 (%) - 미달 시 가습기 ON</div>
+
+<h3>특정 구역만 다르게 설정</h3>
+<div class="code-block"># 예: 3구역만 온도 범위를 좁게 설정
+SENSOR_3_TEMP_MAX=25
+SENSOR_3_TEMP_MIN=20</div>
+
+<div class="warn">
+  <strong>임계값을 변경한 후</strong>에는 프로그램을 재시작해야 적용됩니다.<br>
+  ① 실행 중인 cmd 창에서 <strong>Ctrl + C</strong> 로 종료<br>
+  ② <code>npm start</code> 로 다시 시작
+</div>
+
+
+<!-- ===== 8. 자동 실행 설정 ===== -->
+<h2 id="s8">8. Windows 자동 실행 설정</h2>
+<p>Windows에 로그인할 때마다 Tapo Monitor가 자동으로 시작되도록 설정할 수 있습니다.</p>
+
+<h3>자동 시작 등록</h3>
+<div style="counter-reset: step;">
+  <div class="step">tapo-monitor 폴더 안의 <strong>setup-autostart.bat</strong> 을 더블클릭합니다.</div>
+  <div class="step">"등록이 완료되었습니다" 메시지가 나오면 성공입니다.</div>
+  <div class="step">다음 로그온부터 자동으로 실행됩니다 (창 없이 백그라운드 동작).</div>
+</div>
+
+<h3>자동 시작 해제</h3>
+<div style="counter-reset: step;">
+  <div class="step">tapo-monitor 폴더 안의 <strong>uninstall-autostart.bat</strong> 을 더블클릭합니다.</div>
+  <div class="step">예약된 작업이 삭제되고 자동 실행이 중단됩니다.</div>
+</div>
+
+<h3>즉시 실행 / 상태 확인 (명령어)</h3>
+<div class="code-block"># 재부팅 없이 즉시 실행
+schtasks /Run /TN "TapoMonitor"
+
+# 실행 상태 확인
+schtasks /Query /TN "TapoMonitor" /V /FO LIST</div>
+
+
+<!-- ===== 9. 문제 해결 ===== -->
+<h2 id="s9">9. 문제 해결</h2>
+
+<table>
+  <tr><th>증상</th><th>원인 및 해결</th></tr>
+  <tr>
+    <td>"Missing required env var" 오류</td>
+    <td><code>.env</code> 파일에 필수 항목이 빠져 있습니다. 4장을 참고하여 모든 항목을 입력하세요.</td>
+  </tr>
+  <tr>
+    <td>handshake failed / 403 오류</td>
+    <td>
+      ① <code>.env</code> 에 입력한 Tapo 이메일/비밀번호가 맞는지 확인하세요.<br>
+      ② 플러그 IP가 올바른지 Tapo 앱에서 다시 확인하세요.<br>
+      ③ PC와 Tapo 장치가 <strong>같은 Wi-Fi 네트워크</strong>인지 확인하세요.
+    </td>
+  </tr>
+  <tr>
+    <td>EADDRINUSE 포트 3000 사용 중</td>
+    <td>
+      다른 프로그램이 포트 3000을 사용 중입니다.<br>
+      <code>.env</code> 에서 <code>DASHBOARD_PORT=3001</code> 로 변경 후 재시작하세요.
+    </td>
+  </tr>
+  <tr>
+    <td>대시보드 "재연결 중" 표시</td>
+    <td>
+      프로그램(npm start)이 꺼져 있습니다.<br>
+      cmd에서 <code>npm start</code> 를 실행하거나 <code>schtasks /Run /TN "TapoMonitor"</code> 으로 시작하세요.
+    </td>
+  </tr>
+  <tr>
+    <td>PLC 코일 동작 안 함</td>
+    <td>
+      ① <code>PLC_IP</code> 가 정확한지 확인하세요.<br>
+      ② PLC의 Modbus TCP 기능이 활성화되어 있는지 확인하세요.<br>
+      ③ 코일 번호가 PLC 프로그램과 일치하는지 확인하세요 (0-인덱스 차이 주의).
+    </td>
+  </tr>
+  <tr>
+    <td>npm 명령어를 찾을 수 없음</td>
+    <td>
+      Node.js가 설치되지 않았거나 PATH에 등록되지 않았습니다.<br>
+      Node.js를 재설치하거나 명령 프롬프트를 새로 여세요.
+    </td>
+  </tr>
+  <tr>
+    <td>install.bat 실행 시 "git clone 실패"</td>
+    <td>
+      ① 인터넷 연결 확인<br>
+      ② 저장소가 private이면 GitHub 인증(로그인 팝업) 필요<br>
+      ③ 방화벽/프록시가 GitHub를 차단하는지 IT 담당자에게 확인
+    </td>
+  </tr>
+</table>
+
+
+<!-- ===== 10. 문의처 ===== -->
+<h2 id="s10">10. 문의처</h2>
+<table>
+  <tr><th>항목</th><th>내용</th></tr>
+  <tr><td>담당자</td><td>권현우</td></tr>
+  <tr><td>이메일</td><td>hw.kwon@sinsungo.co.kr</td></tr>
+  <tr><td>회사</td><td>(주)신선고</td></tr>
+</table>
+
+<div class="info" style="margin-top: 32px;">
+  <strong>이 문서를 PDF로 저장하려면:</strong><br>
+  ① 이 페이지를 브라우저(Chrome 권장)에서 엽니다.<br>
+  ② <strong>Ctrl + P</strong> (인쇄)를 누릅니다.<br>
+  ③ "대상 프린터"를 <strong>"PDF로 저장"</strong> (Microsoft Print to PDF 또는 Save as PDF)으로 선택합니다.<br>
+  ④ <strong>저장</strong>을 누르면 PDF가 생성됩니다.<br>
+  또는 우측 상단의 <strong>"PDF로 저장 / 인쇄"</strong> 버튼을 클릭하세요.
+</div>
+
+</body>
+</html>
